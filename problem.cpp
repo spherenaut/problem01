@@ -1,6 +1,5 @@
 #include <iostream>
 #include <assert.h>
-#include <memory.h>
 
 class array {
     int capacity = 0;
@@ -14,7 +13,7 @@ public:
         data = new int[size];
     }
     ~array() {
-        delete data;
+        delete[] data;
     }
     void add(int n) {        
         if (count == size) {            
@@ -22,14 +21,14 @@ public:
             for (int i = 0; i < size; ++i) {
                 p[i] = data[i];
             }
-            delete data;
+            delete[] data;
             size += capacity;
             data = p;            
         }        
         data[count++] = n;
     }
-    int* getPointer(int n) {
-        if (n < size) {
+    int* ptr(int n) {
+        if (0 <= n && n < size) {
             return data + n * sizeof(int);
         }
         else {
@@ -59,15 +58,30 @@ public:
 
 int main (int argc, char** argv) {    
     array& a = *(new array(2));
-    a.add(1.0);
-    a.add(2.0);
-    a.add(3.0);    
+    a.add(1);
+    a.add(2);
+    a.add(3);
+
     array& b = *(new array(3));
-    b.add(3.0);
-    b.add(4.0);
-    b.add(5.0);
+    b.add(4);
+    b.add(5);
+    b.add(6);
 
     assert(a < b);
+    assert(b > a);
+    assert(a == a);
+    assert(a != b);
+
+    array& c = *(new array(2));
+    c.add(1);
+    c.add(2);
+
+    int* p = c.ptr(2);
+    assert(p == NULL);
+
+    p = c.ptr(0);
+    assert(p[0] == 1);
+    assert(p[1] == 2);
 
     return 0;
 }
